@@ -39,13 +39,21 @@ class Admin extends CI_Controller {
 
         $all_rec = $this->db->query($query_maker)->result_array();
         if(count($all_rec)>0){
-          die('Pair Already Exist');
+          //die('Pair Already Exist');
+        }
+        else{
+          $record = array('p_name'=>$pair_name);
+          $this->db->insert('pairs',$record);
         }
 
-        $record = array('p_name'=>$pair_name);
-        $this->db->insert('pairs',$record);
+        $query_pairs = "SELECT * FROM pairs";
 
-        $this->db->query("CREATE TABLE IF NOT EXISTS $pair_name (
+        $all_rec = $this->db->query($query_pairs)->result_array();
+
+        foreach ($all_rec  as $key => $value) {
+
+          $pair_name = $value['p_name'];
+          $this->db->query("CREATE TABLE IF NOT EXISTS $pair_name (
                           `id` int NOT NULL AUTO_INCREMENT,
                           `name` VARCHAR(10) NOT NULL,
                           `trade_datetime` timestamp NOT NULL,
@@ -57,6 +65,12 @@ class Admin extends CI_Controller {
                           `change` float NOT NULL,
                           PRIMARY KEY(id)
                         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
+
+        }
+
+        
+
+        
       }
 
 
